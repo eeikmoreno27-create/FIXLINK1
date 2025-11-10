@@ -1,4 +1,4 @@
-// admin.js
+// scripts/admin.js
 import { db, storage, ADMIN_CODE } from '../firebase.js';
 import { collection, addDoc, doc, onSnapshot, updateDoc, serverTimestamp, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js';
 import { ref as sRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js';
@@ -7,9 +7,6 @@ const adminCodeInput = document.getElementById('adminCodeInput');
 const btnLogin = document.getElementById('btnLogin');
 const ticketForm = document.getElementById('ticketForm');
 const ticketsList = document.getElementById('ticketsList');
-const filterStatus = document.getElementById('filterStatus');
-
-let tickets = [];
 
 btnLogin.onclick = () => {
   if(adminCodeInput.value.trim() === ADMIN_CODE){
@@ -21,7 +18,7 @@ btnLogin.onclick = () => {
 
 ticketForm.onsubmit = async e => {
   e.preventDefault();
-  if(!adminCodeInput.disabled) return alert('Acceso denegado');
+  if(adminCodeInput.disabled !== true) return alert('Acceso denegado');
 
   const data = {
     categoria: document.getElementById('categoria').value.trim(),
@@ -41,6 +38,7 @@ ticketForm.onsubmit = async e => {
   const docRef = await addDoc(collection(db,'tickets'), data);
   const id = docRef.id;
 
+  // Subir imágenes si hay
   const files = Array.from(document.getElementById('images').files).slice(0,6);
   const uploaded = [];
   for(const f of files){
@@ -52,39 +50,30 @@ ticketForm.onsubmit = async e => {
   }
   if(uploaded.length) await updateDoc(doc(db,'tickets',id), { images: uploaded });
 
-  const link = window.location.origin + window.location.pathname.replace('admin.html','client.html') + '?id=' + id;
+  // Copiar link cliente (relativo)
+  const link = `client.html?id=${id}`;
   navigator.clipboard.writeText(link).catch(()=>{});
   alert('Ticket creado. Link copiado:\n' + link);
   ticketForm.reset();
 };
 
+// Escuchar tickets en tiempo real
 function startListeningTickets(){
   const q = query(collection(db,'tickets'), orderBy('createdAt','desc'));
   onSnapshot(q, snap => {
-    tickets = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    renderTickets();
+    ticketsList.innerHTML = '';
+    snap.docs.forEach(d=>{
+      const t = {id:d.id, ...d.data()};
+      const el = document.createElement('div');
+      el.innerHTML = `<strong>${t.producto}</strong> - ${t.cliente} - ${t.status} 
+        <button onclick="copyLink('${t.id}')">Link</button>`;
+      ticketsList.appendChild(el);
+    });
   });
 }
 
-function renderTickets(){
-  const statusFilter = filterStatus.value;
-  ticketsList.innerHTML = '';
-  tickets.filter(t => statusFilter==='all' || t.status===statusFilter)
-    .forEach(t => {
-      const el = document.createElement('div');
-      el.className = 'tickets-item';
-      el.innerHTML = `
-        <strong>${t.producto}</strong> - ${t.cliente} - ${t.status} 
-        <button onclick="copyLink('${t.id}')">Link</button>
-      `;
-      ticketsList.appendChild(el);
-    });
-}
-
-filterStatus.onchange = renderTickets;
-
 window.copyLink = (id) => {
-  const link = window.location.origin + window.location.pathname.replace('admin.html','client.html') + '?id=' + id;
+  const link = `client.html?id=${id}`;
   navigator.clipboard.writeText(link).catch(()=>{});
   alert('Link copiado:\n' + link);
 };
