@@ -1,4 +1,4 @@
-// client.js
+// scripts/client.js
 import { db } from '../firebase.js';
 import { doc, collection, onSnapshot, query, orderBy, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js';
 
