@@ -38,11 +38,10 @@ ticketForm.onsubmit = async e => {
   const docRef = await addDoc(collection(db,'tickets'), data);
   const id = docRef.id;
 
-  // Subir imágenes si hay
   const files = Array.from(document.getElementById('images').files).slice(0,6);
   const uploaded = [];
   for(const f of files){
-    const path = `tickets/${id}/${Date.now()}_${f.name}`;
+    const path = tickets/${id}/${Date.now()}_${f.name};
     const sRefPath = sRef(storage, path);
     await uploadBytes(sRefPath, f);
     const url = await getDownloadURL(sRefPath);
@@ -50,14 +49,12 @@ ticketForm.onsubmit = async e => {
   }
   if(uploaded.length) await updateDoc(doc(db,'tickets',id), { images: uploaded });
 
-  // Copiar link cliente (relativo)
-  const link = `client.html?id=${id}`;
+  const link = client.html?id=${id};
   navigator.clipboard.writeText(link).catch(()=>{});
   alert('Ticket creado. Link copiado:\n' + link);
   ticketForm.reset();
 };
 
-// Escuchar tickets en tiempo real
 function startListeningTickets(){
   const q = query(collection(db,'tickets'), orderBy('createdAt','desc'));
   onSnapshot(q, snap => {
@@ -73,7 +70,7 @@ function startListeningTickets(){
 }
 
 window.copyLink = (id) => {
-  const link = `client.html?id=${id}`;
+  const link = client.html?id=${id};
   navigator.clipboard.writeText(link).catch(()=>{});
   alert('Link copiado:\n' + link);
 };
