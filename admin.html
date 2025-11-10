@@ -11,20 +11,20 @@
     <header class="top">
       <div>
         <h1>FixLink</h1>
-        <p class="muted">Panel técnico — administra reparaciones y responde mensajes</p>
+        <p class="muted">Panel técnico</p>
       </div>
       <div class="right">
-        <input id="adminCodeInput" placeholder="Código técnico">
+        <input id="adminCodeInput" placeholder="Código técnico" />
         <button id="btnLogin">Entrar</button>
       </div>
     </header>
 
     <main class="main-grid">
       <aside class="card small">
-        <h2>Crear / Editar ticket</h2>
+        <h2>Crear ticket</h2>
         <form id="ticketForm">
           <input id="categoria" placeholder="Categoría">
-          <input id="cliente" placeholder="Nombre cliente" required>
+          <input id="cliente" placeholder="Nombre del cliente" required>
           <input id="producto" placeholder="Producto" required>
           <input id="marca" placeholder="Marca / Modelo">
           <input id="serie" placeholder="Serie / IMEI">
@@ -36,23 +36,15 @@
           <select id="status"><option>En espera</option><option>En revisión</option><option>Detenido</option><option>Finalizado</option><option>Listo para recoger</option></select>
           <input type="file" id="images" accept="image/*" multiple>
           <input id="motivo" placeholder="Motivo de detención">
-          <div class="actions">
-            <button type="submit">Guardar ticket</button>
-            <button type="button" id="btnClear">Limpiar</button>
-          </div>
+          <button type="submit">Guardar ticket</button>
         </form>
       </aside>
 
       <section class="card">
-        <div class="header-row">
-          <h2>Tickets</h2>
-          <select id="filterStatus"><option value="all">Todos</option><option>En espera</option><option>En revisión</option><option>Detenido</option><option>Finalizado</option><option>Listo para recoger</option></select>
-        </div>
-        <div id="ticketsList">Cargando tickets...</div>
+        <h2>Tickets</h2>
+        <div id="ticketsList">Cargando...</div>
       </section>
     </main>
-
-    <footer class="foot muted">FixLink • Almacenamiento en Firebase • Eliminación automática 7 días tras finalizado</footer>
   </div>
 
   <script type="module" src="firebase.js"></script>
